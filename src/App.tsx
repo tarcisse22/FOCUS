@@ -9,6 +9,7 @@ import { Courses } from './pages/Courses'
 import { CourseDetail } from './pages/CourseDetail'
 import { Focus } from './pages/Focus'
 import { Progress } from './pages/Progress'
+import { Flashcards } from './pages/Flashcards'
 
 function Protected({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="courses/:id" element={<CourseDetail />} />
             <Route path="focus" element={<Focus />} />
             <Route path="progress" element={<Progress />} />
+          <Route path="flashcards" element={<Flashcards />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

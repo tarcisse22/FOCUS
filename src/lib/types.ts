@@ -50,3 +50,14 @@ export interface UserStats {
   last_session_date: string | null
   daily_goal_minutes: number
 }
+
+export interface Flashcard {
+  id: string
+  user_id: string
+  course_id: string
+  material_id: string | null
+  question: string
+  answer: string
+  known: boolean
+  created_at: string
+}

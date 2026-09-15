@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, FileText, Plus, Trash2, Upload, ExternalLink, Timer } from 'lucide-react'
+import { ArrowLeft, FileText, Plus, Trash2, Upload, ExternalLink, Timer, Sparkles } from 'lucide-react'
 import { format } from 'date-fns'
 import { Modal } from '../components/Modal'
 import { TaskForm } from '../components/TaskForm'
@@ -23,6 +23,8 @@ export function CourseDetail() {
   const [focusSeconds, setFocusSeconds] = useState(0)
   const [editing, setEditing] = useState<Task | null | 'new'>(null)
   const [uploading, setUploading] = useState(false)
+  const [generating, setGenerating] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -65,6 +67,17 @@ export function CourseDetail() {
     setMaterials((prev) => prev.filter((x) => x.id !== m.id))
     await supabase.storage.from('materials').remove([m.storage_path])
     await supabase.from('study_materials').delete().eq('id', m.id)
+  }
+
+  async function generateFlashcards(m: StudyMaterial) {
+    setGenerating(m.id)
+    setError(null)
+    setNotice(null)
+    const { data, error } = await supabase.functions.invoke('generate-flashcards', { body: { materialId: m.id } })
+    setGenerating(null)
+    if (error) return setError(error.message)
+    if (data?.error) return setError(data.error)
+    setNotice(`${data.cards.length} flashcards created from ${m.name}.`)
   }
 
   async function deleteCourse() {
@@ -121,6 +134,7 @@ export function CourseDetail() {
             <input ref={fileRef} type="file" accept="application/pdf" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) upload(f); e.target.value = '' }} />
           </div>
           {error && <p className="text-sm text-red-400">{error}</p>}
+          {notice && <p className="text-sm text-emerald-400">{notice} <Link to={`/app/flashcards?course=${id}`} className="underline">Review →</Link></p>}
           {materials.length === 0 ? (
             <div
               className="card grid place-items-center border-dashed py-10 text-center text-sm text-muted cursor-pointer hover:border-primary/50"
@@ -139,6 +153,9 @@ export function CourseDetail() {
                   <button className="min-w-0 flex-1 text-left" onClick={() => openMaterial(m)}>
                     <p className="truncate text-sm font-medium">{m.name}</p>
                     <p className="text-xs text-muted">{(m.size_bytes / 1024 / 1024).toFixed(1)} MB · {format(new Date(m.created_at), 'MMM d')}</p>
+                  </button>
+                  <button className="btn-ghost p-1.5 text-primary-light" onClick={() => generateFlashcards(m)} disabled={generating !== null} aria-label="Generate flashcards" title="Generate flashcards">
+                    <Sparkles size={15} className={generating === m.id ? 'animate-pulse' : ''} />
                   </button>
                   <button className="btn-ghost p-1.5" onClick={() => openMaterial(m)} aria-label="Open"><ExternalLink size={15} /></button>
                   <button className="btn-ghost p-1.5 hover:text-red-400" onClick={() => deleteMaterial(m)} aria-label="Delete"><Trash2 size={15} /></button>
