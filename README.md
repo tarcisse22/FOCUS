@@ -49,7 +49,7 @@ npx supabase functions deploy generate-flashcards
 ```
 
 The key never reaches the browser; the function runs with the user's JWT so RLS still applies.
-Override the model with `GEMINI_MODEL` (default `gemini-flash-latest`).
+Override the model with `GEMINI_MODEL` (default `gemini-flash-latest`). Each user gets `DAILY_GENERATION_LIMIT` generations per day (default 5) so one person can't exhaust the shared free quota.
 
 ### 2. Configure environment
 

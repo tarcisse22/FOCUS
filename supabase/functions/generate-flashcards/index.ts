@@ -5,6 +5,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 const GEMINI_KEY = Deno.env.get('GEMINI_API_KEY') ?? ''
 const MODELS = [Deno.env.get('GEMINI_MODEL') ?? 'gemini-flash-latest', 'gemini-flash-lite-latest']
 const MAX_PDF_BYTES = 15 * 1024 * 1024
+const DAILY_LIMIT = Number(Deno.env.get('DAILY_GENERATION_LIMIT') ?? 5)
 
 const cors = {
   'Access-Control-Allow-Origin': '*',
@@ -85,6 +86,12 @@ Deno.serve(async (req) => {
   const { materialId, count = 15 } = await req.json().catch(() => ({}))
   if (!materialId) return json({ error: 'materialId required' }, 400)
 
+  // Cards from one generation share a created_at (inserted in one statement), so distinct timestamps = generations.
+  const since = new Date(); since.setUTCHours(0, 0, 0, 0)
+  const { data: today } = await supabase.from('flashcards').select('created_at').not('material_id', 'is', null).gte('created_at', since.toISOString())
+  const used = new Set((today ?? []).map((r) => r.created_at)).size
+  if (used >= DAILY_LIMIT) return json({ error: `Daily limit reached (${DAILY_LIMIT} generations). Try again tomorrow.`, limit: DAILY_LIMIT, used }, 429)
+
   const { data: material } = await supabase.from('study_materials').select('*').eq('id', materialId).single()
   if (!material) return json({ error: 'Material not found' }, 404)
   if (material.size_bytes > MAX_PDF_BYTES) return json({ error: 'PDF is too large (max 15 MB)' }, 400)
@@ -110,5 +117,5 @@ Deno.serve(async (req) => {
   const { data: inserted, error: insErr } = await supabase.from('flashcards').insert(rows).select()
   if (insErr) return json({ error: insErr.message }, 500)
 
-  return json({ cards: inserted })
+  return json({ cards: inserted, remaining: DAILY_LIMIT - used - 1 })
 })

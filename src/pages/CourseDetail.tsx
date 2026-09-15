@@ -9,6 +9,7 @@ import { ProgressBar } from '../components/ProgressBar'
 import { useCourses, useTasks } from '../lib/hooks'
 import { useAuth } from '../lib/auth'
 import { supabase } from '../lib/supabase'
+import { FunctionsHttpError } from '@supabase/supabase-js'
 import { formatDuration } from '../lib/xp'
 import type { StudyMaterial, Task } from '../lib/types'
 
@@ -75,9 +76,13 @@ export function CourseDetail() {
     setNotice(null)
     const { data, error } = await supabase.functions.invoke('generate-flashcards', { body: { materialId: m.id } })
     setGenerating(null)
-    if (error) return setError(error.message)
+    if (error) {
+      const body = error instanceof FunctionsHttpError ? await error.context.json().catch(() => null) : null
+      return setError(body?.error ?? error.message)
+    }
     if (data?.error) return setError(data.error)
-    setNotice(`${data.cards.length} flashcards created from ${m.name}.`)
+    const left = typeof data.remaining === 'number' ? ` ${data.remaining} generation${data.remaining === 1 ? '' : 's'} left today.` : ''
+    setNotice(`${data.cards.length} flashcards created from ${m.name}.${left}`)
   }
 
   async function deleteCourse() {
