@@ -3,6 +3,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Home, CheckSquare, BookOpen, Timer, BarChart3, LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { Logo } from './Logo'
+import { ThemeToggle } from '../lib/theme'
 
 const links = [
   { to: '/app', label: 'Home', icon: Home, end: true },
@@ -36,7 +37,10 @@ export function AppLayout() {
 
   const footer = (
     <div className="border-t border-border pt-4">
-      <p className="truncate px-3 text-xs text-muted">{user?.email}</p>
+      <div className="flex items-center justify-between px-3">
+        <p className="truncate text-xs text-muted">{user?.email}</p>
+        <ThemeToggle />
+      </div>
       <button
         className="nav-link mt-1 w-full"
         onClick={async () => {

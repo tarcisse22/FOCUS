@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Logo } from '../components/Logo'
+import { ThemeToggle } from '../lib/theme'
 import { useAuth } from '../lib/auth'
 import { supabaseConfigured } from '../lib/supabase'
 
@@ -29,7 +30,8 @@ export function AuthPage({ mode }: { mode: 'login' | 'signup' }) {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center px-4">
+    <div className="relative grid min-h-screen place-items-center px-4">
+      <ThemeToggle className="absolute right-4 top-4" />
       <div className="w-full max-w-sm fade-up">
         <div className="mb-8 flex justify-center">
           <Logo />

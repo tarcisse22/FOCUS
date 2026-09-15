@@ -80,7 +80,7 @@ export function CourseDetail() {
 
   return (
     <div className="fade-up space-y-6">
-      <Link to="/app/courses" className="inline-flex items-center gap-1 text-sm text-muted hover:text-white"><ArrowLeft size={16} />Courses</Link>
+      <Link to="/app/courses" className="inline-flex items-center gap-1 text-sm text-muted hover:text-fg"><ArrowLeft size={16} />Courses</Link>
 
       <div className="card relative overflow-hidden">
         <div className="absolute inset-0 opacity-20" style={{ background: `linear-gradient(135deg, ${course.color}, transparent 60%)` }} />

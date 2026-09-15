@@ -150,7 +150,7 @@ export function Focus() {
 
       <div className="relative grid place-items-center">
         <svg width={280} height={280} className="-rotate-90">
-          <circle cx={140} cy={140} r={R} stroke="#1f2740" strokeWidth={12} fill="none" />
+          <circle cx={140} cy={140} r={R} stroke="var(--border)" strokeWidth={12} fill="none" />
           <circle
             cx={140} cy={140} r={R} strokeWidth={12} fill="none" strokeLinecap="round"
             stroke="url(#grad)"
@@ -189,7 +189,7 @@ export function Focus() {
         <p className="text-xs text-muted">{Math.floor(elapsed / 60) * XP_PER_MINUTE} XP earned so far</p>
       )}
       {phase === 'ready' && (
-        <button onClick={() => setPhase('select')} className="text-sm text-muted hover:text-white">Choose a different task</button>
+        <button onClick={() => setPhase('select')} className="text-sm text-muted hover:text-fg">Choose a different task</button>
       )}
     </div>
   )

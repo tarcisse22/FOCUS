@@ -28,7 +28,7 @@ export function Tasks() {
 
       <div className="flex gap-1 rounded-xl bg-surface p-1 w-fit border border-border">
         {(['open', 'done'] as const).map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className={`rounded-lg px-4 py-1.5 text-sm font-medium capitalize transition ${filter === f ? 'bg-primary text-white' : 'text-muted hover:text-white'}`}>
+          <button key={f} onClick={() => setFilter(f)} className={`rounded-lg px-4 py-1.5 text-sm font-medium capitalize transition ${filter === f ? 'bg-primary text-white' : 'text-muted hover:text-fg'}`}>
             {f === 'open' ? 'To do' : 'Completed'}
           </button>
         ))}

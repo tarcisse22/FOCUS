@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { BookOpen, Timer, Flame, BarChart3 } from 'lucide-react'
 import { Logo } from '../components/Logo'
+import { ThemeToggle } from '../lib/theme'
 
 const features = [
   { icon: BookOpen, title: 'Keep your study materials together', text: 'Upload lecture PDFs per course so everything is one click away.' },
@@ -15,6 +16,7 @@ export function Landing() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <Logo />
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Link to="/login" className="btn-ghost">Log In</Link>
           <Link to="/signup" className="btn-primary">Get Started</Link>
         </div>
@@ -57,7 +59,7 @@ export function Landing() {
             <div className="btn-primary w-full py-3 pointer-events-none">START</div>
             <div className="flex items-center justify-between text-xs text-muted">
               <span>Today's focus</span>
-              <span className="text-white">1h 42m / 4h</span>
+              <span className="text-fg">1h 42m / 4h</span>
             </div>
             <div className="h-2 rounded-full bg-surface-2"><div className="h-full w-[42%] rounded-full bg-gradient-to-r from-green-400 to-emerald-500" /></div>
           </div>

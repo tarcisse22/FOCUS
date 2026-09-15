@@ -74,9 +74,9 @@ export function Progress() {
           <div className="mt-4 h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={week} barCategoryGap={16}>
-                <XAxis dataKey="day" tick={{ fill: '#8b93ad', fontSize: 12 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fill: '#8b93ad', fontSize: 12 }} axisLine={false} tickLine={false} width={32} />
-                <Tooltip cursor={{ fill: 'rgba(124,58,237,0.1)' }} contentStyle={{ background: '#131a2e', border: '1px solid #1f2740', borderRadius: 12, color: '#fff' }} formatter={(v) => [`${v} min`, 'Focus']} />
+                <XAxis dataKey="day" tick={{ fill: 'var(--muted)', fontSize: 12 }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fill: 'var(--muted)', fontSize: 12 }} axisLine={false} tickLine={false} width={32} />
+                <Tooltip cursor={{ fill: 'rgba(124,58,237,0.1)' }} contentStyle={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 12, color: 'var(--fg)' }} formatter={(v) => [`${v} min`, 'Focus']} />
                 <Bar dataKey="minutes" fill="#7c3aed" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>

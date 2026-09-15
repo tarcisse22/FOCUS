@@ -79,7 +79,7 @@ export function Courses() {
                   </div>
                   <p className="mt-1 text-xs text-muted">{materialCounts[c.id] ?? 0} materials</p>
                 </div>
-                <ChevronRight size={18} className="text-muted transition group-hover:translate-x-0.5 group-hover:text-white" />
+                <ChevronRight size={18} className="text-muted transition group-hover:translate-x-0.5 group-hover:text-fg" />
               </Link>
             )
           })}
@@ -100,7 +100,7 @@ export function Courses() {
             <label className="label">Color</label>
             <div className="flex gap-2">
               {COLORS.map((c) => (
-                <button type="button" key={c} onClick={() => setColor(c)} className={`h-8 w-8 rounded-full transition ${color === c ? 'ring-2 ring-white ring-offset-2 ring-offset-surface scale-110' : ''}`} style={{ background: c }} aria-label={c} />
+                <button type="button" key={c} onClick={() => setColor(c)} className={`h-8 w-8 rounded-full transition ${color === c ? 'ring-2 ring-fg ring-offset-2 ring-offset-surface scale-110' : ''}`} style={{ background: c }} aria-label={c} />
               ))}
             </div>
           </div>
