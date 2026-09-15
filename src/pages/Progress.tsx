@@ -10,6 +10,8 @@ import { effectiveStreak, fetchStats } from '../lib/stats'
 import { formatDuration, levelFromXp } from '../lib/xp'
 import type { FocusSession, UserStats } from '../lib/types'
 
+const pluralDays = (n: number) => `${n} day${n === 1 ? '' : 's'}`
+
 export function Progress() {
   const { user } = useAuth()
   const { courses } = useCourses()
@@ -44,7 +46,7 @@ export function Progress() {
   const cards = [
     { icon: Clock, label: 'Total focus time', value: formatDuration(total), color: 'text-primary-light' },
     { icon: Hash, label: 'Sessions completed', value: sessions.length.toString(), color: 'text-secondary' },
-    { icon: Flame, label: 'Current streak', value: `${stats ? effectiveStreak(stats) : 0} days`, color: 'text-orange-400' },
+    { icon: Flame, label: 'Current streak', value: pluralDays(stats ? effectiveStreak(stats) : 0), color: 'text-orange-400' },
     { icon: Trophy, label: 'Longest session', value: formatDuration(longest), color: 'text-yellow-300' },
   ]
 
@@ -90,7 +92,7 @@ export function Progress() {
           </div>
           <div className="border-t border-border pt-4">
             <p className="text-xs text-muted">Longest streak</p>
-            <p className="text-xl font-bold">{stats?.longest_streak ?? 0} days</p>
+            <p className="text-xl font-bold">{pluralDays(stats?.longest_streak ?? 0)}</p>
           </div>
         </div>
       </div>
