@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
 import type { Course, Priority, Task } from '../lib/types'
@@ -57,6 +58,11 @@ export function TaskForm({
             <option key={c.id} value={c.id}>{c.code} — {c.name}</option>
           ))}
         </select>
+        {courses.length === 0 && (
+          <p className="mt-1.5 text-xs text-muted">
+            No courses yet. <Link to="/app/courses" className="text-primary-light hover:underline">Create one</Link> to organize tasks by class.
+          </p>
+        )}
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
