@@ -3,7 +3,7 @@
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const GEMINI_KEY = Deno.env.get('GEMINI_API_KEY') ?? ''
-const GEMINI_MODEL = Deno.env.get('GEMINI_MODEL') ?? 'gemini-2.5-flash'
+const MODELS = [Deno.env.get('GEMINI_MODEL') ?? 'gemini-flash-latest', 'gemini-flash-lite-latest']
 const MAX_PDF_BYTES = 15 * 1024 * 1024
 
 const cors = {
@@ -24,7 +24,23 @@ function toBase64(bytes: Uint8Array): string {
 }
 
 async function askGemini(pdf: Uint8Array, count: number): Promise<Card[]> {
-  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_KEY}`, {
+  let lastErr = new Error('Gemini unavailable')
+  for (const model of MODELS) {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        return await callModel(model, pdf, count)
+      } catch (e) {
+        lastErr = e as Error
+        if (!/ (503|429|404):/.test(lastErr.message)) throw lastErr
+        await new Promise((r) => setTimeout(r, 1500))
+      }
+    }
+  }
+  throw lastErr
+}
+
+async function callModel(model: string, pdf: Uint8Array, count: number): Promise<Card[]> {
+  const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

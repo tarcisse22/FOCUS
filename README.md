@@ -49,7 +49,7 @@ npx supabase functions deploy generate-flashcards
 ```
 
 The key never reaches the browser; the function runs with the user's JWT so RLS still applies.
-Override the model with `GEMINI_MODEL` (default `gemini-2.5-flash`).
+Override the model with `GEMINI_MODEL` (default `gemini-flash-latest`).
 
 ### 2. Configure environment
 
