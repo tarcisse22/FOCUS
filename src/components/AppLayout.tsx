@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { Home, CheckSquare, BookOpen, Timer, BarChart3, Layers, LogOut, Menu, X } from 'lucide-react'
+import { Home, CheckSquare, BookOpen, Timer, BarChart3, Layers, NotebookPen, LogOut, Menu, X } from 'lucide-react'
 import { useAuth } from '../lib/auth'
 import { Logo } from './Logo'
 import { ThemeToggle } from '../lib/theme'
@@ -11,6 +11,7 @@ const links = [
   { to: '/app/courses', label: 'Courses', icon: BookOpen },
   { to: '/app/focus', label: 'Focus Session', icon: Timer },
   { to: '/app/flashcards', label: 'Flashcards', icon: Layers },
+  { to: '/app/notes', label: 'Notes', icon: NotebookPen },
   { to: '/app/progress', label: 'Progress', icon: BarChart3 },
 ]
 

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Pause, Play, Square, Flame, Zap, Timer } from 'lucide-react'
+import { Pause, Play, Square, Flame, Zap, Timer, NotebookPen } from 'lucide-react'
 import { useCourses, useTasks } from '../lib/hooks'
+import { useNotes } from '../lib/notes'
+import { NoteEditor } from '../components/NoteEditor'
 import { useAuth } from '../lib/auth'
 import { saveFocusSession, type SessionResult } from '../lib/stats'
 import { formatClock, XP_PER_MINUTE } from '../lib/xp'
@@ -24,9 +26,21 @@ export function Focus() {
   const [result, setResult] = useState<SessionResult | null>(null)
   const startedAt = useRef<Date | null>(null)
   const tick = useRef<number | null>(null)
+  const { notes, create: createNote, update: updateNote } = useNotes()
+  const [noteId, setNoteId] = useState<string | null>(null)
+  const [showNote, setShowNote] = useState(false)
+  const note = notes.find((n) => n.id === noteId) ?? null
 
   const task = tasks.find((t) => t.id === taskId)
   const course = courses.find((c) => c.id === (task?.course_id ?? courseId))
+
+  async function openNote() {
+    if (!noteId) {
+      const n = await createNote(task?.course_id ?? courseId ?? null, task ? `Notes: ${task.title}` : `Focus notes · ${new Date().toLocaleDateString()}`)
+      if (n) setNoteId(n.id)
+    }
+    setShowNote(true)
+  }
 
   useEffect(() => {
     if (phase === 'running') {
@@ -127,8 +141,11 @@ export function Focus() {
         {task && !task.completed && (
           <button className="btn-secondary w-full" onClick={() => { toggle(task); navigate('/app') }}>Mark "{task.title}" complete</button>
         )}
+        {note && (note.body || note.title) && (
+          <Link to={`/app/notes?note=${note.id}`} className="btn-secondary w-full"><NotebookPen size={16} />Open your session notes</Link>
+        )}
         <div className="flex gap-3">
-          <button className="btn-secondary flex-1" onClick={() => { setPhase('select'); setElapsed(0); setResult(null) }}>Another session</button>
+          <button className="btn-secondary flex-1" onClick={() => { setPhase('select'); setElapsed(0); setResult(null); setNoteId(null); setShowNote(false) }}>Another session</button>
           <Link to="/app" className="btn-primary flex-1">Back to dashboard</Link>
         </div>
       </div>
@@ -187,6 +204,18 @@ export function Focus() {
 
       {phase !== 'ready' && (
         <p className="text-xs text-muted">{Math.floor(elapsed / 60) * XP_PER_MINUTE} XP earned so far</p>
+      )}
+      {phase !== 'ready' && !showNote && (
+        <button onClick={openNote} className="btn-ghost text-sm"><NotebookPen size={16} />Take notes</button>
+      )}
+      {phase !== 'ready' && showNote && (
+        <div className="card w-full text-left">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-sm font-semibold">Session notes</p>
+            <button onClick={() => setShowNote(false)} className="text-xs text-muted hover:text-fg">Hide</button>
+          </div>
+          {note ? <NoteEditor note={note} courses={courses} onChange={updateNote} compact /> : <p className="text-sm text-muted">Creating note…</p>}
+        </div>
       )}
       {phase === 'ready' && (
         <button onClick={() => setPhase('select')} className="text-sm text-muted hover:text-fg">Choose a different task</button>

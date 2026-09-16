@@ -17,6 +17,7 @@ No AI, no payments, no paid services. Just React + Supabase.
 - **XP & levels** — 1 focused minute = 10 XP; levels need 500, 750, 1000, … XP each
 - **Streaks** — consecutive days with at least one focus session
 - **Progress** — total focus time, sessions, streak, longest session, weekly chart, focus time by course (all from real data)
+- **Notes** — autosaving study notes per course, with a notes panel right on the focus screen (run `supabase/notes.sql`)
 - **Flashcards** — generate flashcards from a lecture PDF with Google Gemini (free tier), or write your own; review with flip / got it / missed
 - **Dark & light mode** — toggle in the sidebar; remembered per device
 
@@ -84,7 +85,7 @@ Requires Node 20.19+ or 22+.
 src/
   components/   AppLayout (sidebar), Modal, TaskForm, TaskItem, ProgressBar, …
   lib/          supabase client, auth context, data hooks, XP/level math, stats & streak logic
-  pages/        Landing, AuthPage, Dashboard, Tasks, Courses, CourseDetail, Focus, Progress, Flashcards
+  pages/        Landing, AuthPage, Dashboard, Tasks, Courses, CourseDetail, Focus, Progress, Flashcards, Notes
 supabase/
   schema.sql        database schema, RLS policies, storage bucket
   flashcards.sql    flashcards table + RLS
