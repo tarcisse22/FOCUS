@@ -12,15 +12,25 @@ interface AuthValue {
 
 const AuthContext = createContext<AuthValue | null>(null)
 
+// The browser reports an unreachable server as a bare "Failed to fetch"
+// (Chrome) or "Load failed" (Safari). On the free Supabase tier that usually
+// means the project is paused or still waking up, so say that instead.
+function friendlyError(message: string): string {
+  if (/failed to fetch|load failed|networkerror|network request failed/i.test(message)) {
+    return "Can't reach the FOCUS server right now. It may be waking up, so give it a minute and try again."
+  }
+  return message
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session)
-      setLoading(false)
-    })
+    supabase.auth
+      .getSession()
+      .then(({ data }) => setSession(data.session))
+      .finally(() => setLoading(false))
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => setSession(s))
     return () => sub.subscription.unsubscribe()
   }, [])
@@ -38,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     signIn: async (email, password) => {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
-      return error?.message ?? null
+      return error ? friendlyError(error.message) : null
     },
     signUp: async (email, password, name) => {
       const { error } = await supabase.auth.signUp({
@@ -46,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
         options: { data: { full_name: name } },
       })
-      return error?.message ?? null
+      return error ? friendlyError(error.message) : null
     },
     signOut: async () => {
       await supabase.auth.signOut()
